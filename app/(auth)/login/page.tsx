@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button } from '@/app/components/ui/Button'
 import { HiOutlineDevicePhoneMobile } from "react-icons/hi2";
+import Link from 'next/link';
 
 function AuthPage() {
   return (
@@ -29,10 +30,12 @@ function AuthPage() {
                     className="flex-1 rounded-lg border focus:ring-purple-500 focus:border-purple-500 text-sm sm:text-base px-4 py-3"
                   />
                 </div>
-
-                                <p className="text-xs sm:text-sm text-gray-500 ">
+                                                <p className="text-xs sm:text-sm text-gray-500 ">
+                <Link href="/register">
                   Don't have an account?
+                </Link>
                 </p>
+
 
 
                 <Button className="w-full bg-gradient-to-r from-[#9333EA] to-[#DB2777] text-white py-6 rounded-lg font-semibold text-sm sm:text-base">

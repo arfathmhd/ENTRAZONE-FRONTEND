@@ -17,7 +17,12 @@ interface Chapter {
   rating?: number;
 }
 
-export const ChapterCard = ({ chapter }: { chapter: Chapter }) => {
+interface ChapterCardProps {
+  chapter: Chapter
+  onUnlockClick?: () => void 
+}
+
+export const ChapterCard = ({ chapter, onUnlockClick }: ChapterCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {
@@ -105,11 +110,12 @@ export const ChapterCard = ({ chapter }: { chapter: Chapter }) => {
             className={`w-full cursor-pointer ${
               chapter.isUnlocked
                 ? 
-                  "bg-gradient-to-r from-[#9333EA] to-[#DB2777] text-white"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  "bg-gradient-to-r from-[#9333EA] to-[#DB2777] text-white "
+                : "bg-gray-300 text-gray-500 cursor-not-allowed hover:bg-gray-300"
             }`}
-            disabled={!chapter.isUnlocked}
-            onClick={handleOpenModal}
+            // disabled={!chapter.isUnlocked}
+            onClick={!chapter.isUnlocked ? onUnlockClick : undefined} 
+
           >
             {chapter.isUnlocked ? (chapter.hasVideo ? "Watch Video" : "Start Chapter") : "Locked"}
           </Button>

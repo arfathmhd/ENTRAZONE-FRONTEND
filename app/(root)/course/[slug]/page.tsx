@@ -2,7 +2,7 @@ import { ArrowLeft, Home, Ruler, Globe, Dna, TestTube, Lock, Clock, FileText, St
 import Link from "next/link";
 import Image from "next/image";
 import { AssessmentCard } from "@/app/components/ui/CoursePage/AssessmentCard";
-import { ChapterCard } from "@/app/components/ui/CoursePage/ChapterCard";
+import ClientCardComponent from "@/app/components/ui/CoursePage/ClientCardComponent";
 
 interface Chapter {
   id: number;
@@ -181,6 +181,9 @@ export default async function CoursePage({ params }: { params: { slug: string } 
   const chapters = getChapters();
   const assessments = getAssessments();
 
+
+
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-gradient-to-r from-[#F3E8FF] to-[#FDF2F8] border-b border-gray-200 px-4 sm:px-6 py-6 sm:py-10">
@@ -220,11 +223,7 @@ export default async function CoursePage({ params }: { params: { slug: string } 
             <p className="text-sm sm:text-base text-gray-600">Complete chapters in sequence to unlock the next level</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {chapters.map((chapter) => (
-              <ChapterCard key={chapter.id} chapter={chapter} />
-            ))}
-          </div>
+            <ClientCardComponent chapters={chapters}/>
         </div>
 
         <div>
@@ -245,6 +244,7 @@ export default async function CoursePage({ params }: { params: { slug: string } 
           </div>
         </div>
       </div>
+
     </div>
   );
 }
