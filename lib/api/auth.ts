@@ -1,14 +1,28 @@
 import axiosInstance from './axios';
 
 export interface LoginPayload {
+  phone: string;
+  request_id: string;
+}
+
+export interface User {
+  id: number;
+  username: string;
+  phone: string;
   email: string;
-  password: string;
+  district?: string;
+  address?: string;
+  image?: string;
 }
 
 export interface RegisterPayload {
   email: string;
-  password: string;
-  name: string;
+  password?: string;
+  username: string;
+  district: string;
+  address: string;
+  phone: string;
+  request_id: string;
 }
 
 export interface VerifyOtpPayload {
@@ -18,16 +32,29 @@ export interface VerifyOtpPayload {
 }
 
 export interface AuthResponse {
-  token: string;
+  status: string;
+  message: string;
   user: {
-    id: string;
-    email: string;
+    id: number;
     name: string;
+    image: string;
+    phone: string;
+    email: string;
+    district: string;
   };
+  refresh: string;
+  access: string;
 }
+
+export interface SelectedCoursePayload {
+course_id:number
+}
+
 export const authApi = {
   login: async (payload: LoginPayload) => {
-    const response = await axiosInstance.post('/v1/login/', payload);
+    const response = await axiosInstance.post('/v1/otp-auth/', payload);    
+    console.log(response,"this is backend response");
+    
     return response.data;
   },
 
@@ -37,9 +64,40 @@ export const authApi = {
   },
 
   verifyOtp: async (payload: VerifyOtpPayload) => {
-    const response = await axiosInstance.post('/v1/otp-login-verify/', payload);
+    const response = await axiosInstance.post('/v1/signup-otp-auth/', payload);
+    console.log(response,"what is response show me");
+    
     return response.data;
   },
+
+  LoginverifyOtp: async (payload: VerifyOtpPayload) => {
+    const response = await axiosInstance.post('/v1/otp-login-verify/', payload);
+    console.log(response,"what lgin show me");
+    return response.data;
+  },
+
+
+
+
+  getCourses: async () => {
+        try {
+            const response = await axiosInstance.get('/v1/course-list/'); 
+            console.log(response,"got it cousers");
+            
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching window series:', error);
+            throw error;
+        }
+    },
+
+  selectedCourse: async (payload: SelectedCoursePayload) => {
+    console.log(payload,"oooooooooo");
+  const response = await axiosInstance.get('/v1/course-select/', {
+    params: payload, // ✅ Will become ?course_id=1
+  });    console.log(response,"what selected");
+    return response.data;
+  },  
 
   logout: async () => {
     const response = await axiosInstance.post('/v1/logout/');

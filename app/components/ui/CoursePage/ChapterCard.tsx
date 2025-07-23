@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Button } from "../Button";
 import { useState } from "react";
 import { VideoModal } from "../VideoModal";
+import { useRouter } from "next/navigation";
 
 interface Chapter {
   id: number;
@@ -24,16 +25,16 @@ interface ChapterCardProps {
 
 export const ChapterCard = ({ chapter, onUnlockClick }: ChapterCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleOpenModal = () => {
-    if (chapter.isUnlocked && chapter.hasVideo) {
-      setIsModalOpen(true);
-    }
-  };
+  const router = useRouter()
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
+
+  const handleExploreClick = (id: number) => {
+    router.push(`/chapter/${id}`)
+  }
 
   return (
     <>
@@ -105,20 +106,22 @@ export const ChapterCard = ({ chapter, onUnlockClick }: ChapterCardProps) => {
               </div>
             )}
           </div>
-
-          <Button
-            className={`w-full cursor-pointer ${
-              chapter.isUnlocked
-                ? 
-                  "bg-gradient-to-r from-[#9333EA] to-[#DB2777] text-white "
-                : "bg-gray-300 text-gray-500 cursor-not-allowed hover:bg-gray-300"
-            }`}
-            // disabled={!chapter.isUnlocked}
-            onClick={!chapter.isUnlocked ? onUnlockClick : undefined} 
-
-          >
-            {chapter.isUnlocked ? (chapter.hasVideo ? "Watch Video" : "Start Chapter") : "Locked"}
-          </Button>
+        <Button
+          className={`w-full cursor-pointer ${
+            chapter.isUnlocked
+              ? "bg-gradient-to-r from-[#9333EA] to-[#DB2777] text-white "
+              : "bg-gray-300 text-gray-500 cursor-not-allowed hover:bg-gray-300"
+          }`}
+          onClick={
+            !chapter.isUnlocked 
+              ? onUnlockClick 
+              : chapter.hasVideo 
+                ? () => setIsModalOpen(true)
+                : () => handleExploreClick(chapter.id)
+          }
+        >
+          {chapter.isUnlocked ? (chapter.hasVideo ? "Watch Video" : "Start Chapter") : "Locked"}
+        </Button>
         </div>
 
         {chapter.duration && (

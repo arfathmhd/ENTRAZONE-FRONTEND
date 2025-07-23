@@ -6,6 +6,7 @@ import { SubjectGrid } from "../components/ui/SubjectGrid";
 import { MdOutlineArrowOutward } from "react-icons/md";
 import { FiFileText } from "react-icons/fi";
 import { YoutubeGrid } from "../components/ui/YoutubeGrid";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -43,10 +44,12 @@ export default function Home() {
             </div>
 
             <div className="flex gap-4 ">
-              <Button variant="outline" size='lg' className="flex items-center">Daily Task
+              <Link href="/daily-task">
+              <Button variant="outline" size='lg' className="flex items-center cursor-pointer">Daily Task
                 <FiFileText />
               </Button>
-              <Button variant="outline" size='lg' className="flex items-center">View All 
+              </Link>
+              <Button variant="outline" size='lg' className="flex items-center cursor-pointer">View All 
                 <MdOutlineArrowOutward />
 
               </Button>

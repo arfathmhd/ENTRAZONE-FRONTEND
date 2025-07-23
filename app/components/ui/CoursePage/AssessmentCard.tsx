@@ -1,8 +1,11 @@
+"use client"
+
 import { Lock, Clock, FileText, Star, Play } from "lucide-react";
 import { Button } from "../Button";
+import { useRouter } from "next/navigation";
 
 interface Assessment {
-  id: string;
+  id: number;
   title: string;
   description: string;
   duration: string;
@@ -15,8 +18,15 @@ interface Assessment {
 }
 
 export const AssessmentCard = ({ assessment }: { assessment: Assessment }) => {
+
+    const router = useRouter()
+    
+    const handleExamClick = (id: number) => {
+      router.push(`/assessment/${id}`)
+    }
+
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 ">
       <div className="flex justify-center mb-4">
         <div
           className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${assessment.color}`}
@@ -54,7 +64,7 @@ export const AssessmentCard = ({ assessment }: { assessment: Assessment }) => {
         )}
       </div>
 
-      <Button className={`w-full ${assessment.buttonColor} text-white`} disabled={!assessment.isUnlocked}>
+      <Button className={`w-full cursor-pointer ${assessment.buttonColor} text-white`} disabled={!assessment.isUnlocked}  onClick={() => handleExamClick(assessment.id)} >
         {assessment.isUnlocked ? (assessment.score ? "Retake Exam" : "Start Exam") : "Locked"}
       </Button>
      {assessment.attempts && (

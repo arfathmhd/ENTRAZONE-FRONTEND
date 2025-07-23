@@ -1,13 +1,14 @@
-import React from 'react'
-import Header from '../components/layout/Header'
+import React from "react";
+import Header from "../components/layout/Header";
+import AuthGuard from "../components/AuthGuard";
 
-function layout({children}:Readonly<{children:React.ReactNode}>) {
+function layout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div>
-        <Header/>
-        {children}
-    </div>
-  )
+    <AuthGuard requireProfileComplete requireCourseSelection>
+      <Header />
+      {children}
+    </AuthGuard>
+  );
 }
 
-export default layout
+export default layout;

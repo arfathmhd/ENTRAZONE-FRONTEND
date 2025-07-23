@@ -1,3 +1,4 @@
+import { useAuthStore } from '@/stores/auth.store';
 import axios from 'axios';
 
 const axiosInstance = axios.create({
@@ -9,9 +10,9 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const { accessToken } = useAuthStore.getState();
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
     return config;
   },
@@ -26,8 +27,9 @@ axiosInstance.interceptors.response.use(
   (error) => {
     // Handle errors globally
     if (error.response?.status === 401) {
-      console.log("error");
-      
+      console.log("Unauthorized error");
+      // You might want to call logout here if needed
+      // useAuthStore.getState().logout();
     }
     return Promise.reject(error);
   }

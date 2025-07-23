@@ -16,7 +16,7 @@ interface Chapter {
 }
 
 interface Assessment {
-  id: string;
+  id: number;
   title: string;
   description: string;
   duration: string;
@@ -124,7 +124,7 @@ const getChapters = (): Chapter[] => [
 
 const getAssessments = (): Assessment[] => [
   {
-    id: "1",
+    id: 1,
     title: "Algebra Assessment",
     description: "Test your understanding of algebraic concepts",
     duration: "60 mins",
@@ -136,7 +136,7 @@ const getAssessments = (): Assessment[] => [
     buttonColor: "bg-gradient-to-r from-[#10B981] to-[#059669]",
   },
   {
-    id: "2",
+    id: 2,
     title: "Geometry Quiz",
     description: "Evaluate your geometry and trigonometry skills",
     duration: "40 mins",
@@ -146,7 +146,7 @@ const getAssessments = (): Assessment[] => [
     buttonColor: "bg-gradient-to-r from-[#F59E0B] to-[#D97706]",
   },
   {
-    id: "3",
+    id: 3,
     title: "Statistics Test",
     description: "Evaluate your geometry and trigonometry skills",
     duration: "40 mins",
@@ -156,7 +156,7 @@ const getAssessments = (): Assessment[] => [
     buttonColor: "bg-gray-400",
   },
   {
-    id: "4",
+    id: 4,
     title: "Final Exam",
     description: "Complete mathematics course assessment",
     duration: "120 mins",

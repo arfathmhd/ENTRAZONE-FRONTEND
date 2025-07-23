@@ -18,6 +18,7 @@ interface Subject {
 
 function SubjectCard({ subject }: { subject: Subject }) {
   const router = useRouter()
+  
   const handleExploreClick = (slug: string) => {
     router.push(`/course/${slug}`)
   }
