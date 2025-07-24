@@ -60,6 +60,8 @@ export const authApi = {
 
   register: async (payload: RegisterPayload) => {
     const response = await axiosInstance.post('/v1/register/', payload);
+    console.log(response,"chek this");
+    
     return response.data;
   },
 
@@ -81,9 +83,7 @@ export const authApi = {
 
   getCourses: async () => {
         try {
-            const response = await axiosInstance.get('/v1/course-list/'); 
-            console.log(response,"got it cousers");
-            
+            const response = await axiosInstance.get('/v1/course-list/');             
             return response.data;
         } catch (error) {
             console.error('Error fetching window series:', error);
@@ -92,9 +92,8 @@ export const authApi = {
     },
 
   selectedCourse: async (payload: SelectedCoursePayload) => {
-    console.log(payload,"oooooooooo");
   const response = await axiosInstance.get('/v1/course-select/', {
-    params: payload, // ✅ Will become ?course_id=1
+    params: payload, 
   });    console.log(response,"what selected");
     return response.data;
   },  

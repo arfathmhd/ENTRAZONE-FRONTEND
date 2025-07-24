@@ -6,16 +6,23 @@ import { HiOutlineDevicePhoneMobile } from "react-icons/hi2";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth.store';
+import LoginSkeleton from '@/app/components/LoadingSkeleton/LoginSkeleton';
+import { FaSpinner } from "react-icons/fa";
 
 function AuthPage() {
   const [phone, setPhone] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [formSubmitting, setFormSubmitting] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true); 
   const router = useRouter();
   const login = useAuthStore((state) => state.login);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isProfileComplete = useAuthStore((state) => state.isProfileComplete);
-    useEffect(() => {
+  const [error, setError] = useState('');
+
+
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
       if (isAuthenticated) {
         if (isProfileComplete) {
           router.push('/');
@@ -23,29 +30,33 @@ function AuthPage() {
           router.push('/register');
         }
       }
-    }, [isAuthenticated, isProfileComplete, router]);
+      setPageLoading(false);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, [isAuthenticated, isProfileComplete, router]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setFormSubmitting(true);
     setError('');
     
     try {
       const request_id = Math.floor(100000 + Math.random() * 900000).toString();
-      
-      console.log(request_id,"this is request id");
-      
-      const response = await login(phone, request_id);
-      console.log(response,"login response");
-      
-        router.push('/otp');
-      
+      await login(phone, request_id);
+      router.push('/otp');
     } catch (err) {
       setError('Failed to send OTP. Please try again.');
     } finally {
-      setIsLoading(false);
+      setFormSubmitting(false);
     }
   };
+
+ if (pageLoading) {
+    return <LoginSkeleton />;
+  }
+
 
   return (
     <div className="w-full lg:w-1/2 max-w-sm flex justify-center">
@@ -87,12 +98,18 @@ function AuthPage() {
 
             <Button 
               type="submit"
-              className="w-full bg-gradient-to-r from-[#9333EA] to-[#DB2777] text-white py-6 rounded-lg font-semibold text-sm sm:text-base"
-              disabled={isLoading}
+              className="w-full bg-gradient-to-r from-[#9333EA] to-[#DB2777] text-white py-6 rounded-lg font-semibold text-sm sm:text-base flex justify-center items-center gap-2"
+              disabled={formSubmitting}
             >
-              {isLoading ? 'Processing...' : 'Get OTP'}
+              {formSubmitting ? (
+                <>
+                  <FaSpinner className="animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                "Get OTP"
+              )}
             </Button>
-
             <p className="text-xs text-gray-500 leading-relaxed mt-6">
               By creating or logging into an account you're agreeing with our{" "}
               <span className="text-purple-600 underline">

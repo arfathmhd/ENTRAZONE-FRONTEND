@@ -1,3 +1,4 @@
+
 import ProfileDashboard from "@/app/components/ui/profile/ProfileDashboardClient"
 
 // Static user data
@@ -14,5 +15,8 @@ const staticUserData = {
 }
 
 export default function ProfilePage() {
-  return <ProfileDashboard userData={staticUserData} />
+  
+  return (
+  <ProfileDashboard userData={staticUserData} />
+  )
 }

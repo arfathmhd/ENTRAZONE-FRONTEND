@@ -3,37 +3,50 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/app/components/ui/Button";
 import { BiCreditCard } from "react-icons/bi";
+import { FaSpinner } from "react-icons/fa";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/stores/auth.store";
+import OtpSkeleton from "@/app/components/LoadingSkeleton/OtpSkeleton";
 
 function OtpVerificationPage() {
   const [otp, setOtp] = useState<string[]>(['', '', '', '']);
   const [localError, setLocalError] = useState<string>('');
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const [error, setError] = useState('');
   const router = useRouter();
   const searchParams = useSearchParams();
   const verifyOtp = useAuthStore((state) => state.verifyOtp);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isProfileComplete = useAuthStore((state) => state.isProfileComplete);
-  const { tempPhone, tempRequestId } = useAuthStore.getState(); 
+  const { tempPhone, tempRequestId, isRegisterPageVisible,route } = useAuthStore.getState(); 
+
+    useEffect(() => {
+        if (isAuthenticated) {
+          if (isProfileComplete) {
+                router.push('/');
+          } else if (!isRegisterPageVisible) {            
+                router.push('/register');
+          } else if (isRegisterPageVisible) {
+                router.push("/profile"); 
+          }
+        }
+        setPageLoading(false);
+    }, [isAuthenticated, isProfileComplete, router,isRegisterPageVisible]);
+
+
 
   useEffect(() => {
-    if (isAuthenticated) {
-      if (isProfileComplete) {
-        router.push('/');
-      } else {
-        router.push('/register');
-      }
-    }
-  }, [isAuthenticated, isProfileComplete, router]);
-
-  useEffect(() => {
-    if (inputRefs.current[0]) {
+    if (!pageLoading && inputRefs.current[0]) {
       inputRefs.current[0].focus();
     }
-  }, []);
+  }, [pageLoading]);
+
+
+
+
+
 
   const handleChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
@@ -59,13 +72,12 @@ function OtpVerificationPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("otp page phone and digit",tempPhone,tempRequestId);
     
-    // Check if OTP is complete
     if (otp.some(digit => digit === '')) {
       setLocalError('Please enter the complete OTP');
       return;
     }
+    
     const code = otp.join('');
     
     if (!tempPhone || !tempRequestId) {
@@ -73,29 +85,33 @@ function OtpVerificationPage() {
       return;
     }
 
-    setIsLoading(true);
+    setIsSubmitting(true);
     setError('');
     setLocalError('');
     
     try {
       await verifyOtp(tempPhone, code, tempRequestId);
+        if (route === 'signup') {
+          if (!isRegisterPageVisible) {
+            router.push('/register');
+          } else {
+            console.log("ithanoooooo");
+            
+            router.push('/profile');
+          }
+        } else if (route === 'login') {
+          router.push('/');
+        }
+
     } catch (err) {
       setError('Invalid OTP. Please try again.');
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  if (isLoading || (!tempPhone || !tempRequestId)) {
-    return (
-      <div className="w-full lg:w-1/2 max-w-sm flex justify-center">
-        <div className="w-full bg-white rounded-3xl shadow-2xl p-6 sm:p-8">
-          <div className="text-center py-10">
-            <p>Loading...</p>
-          </div>
-        </div>
-      </div>
-    );
+  if (pageLoading || (!tempPhone || !tempRequestId)) {
+    return <OtpSkeleton />;
   }
 
   return (
@@ -127,7 +143,7 @@ function OtpVerificationPage() {
                     onChange={(e) => handleChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
                     className="w-10 h-10 sm:w-12 sm:h-12 text-center text-lg sm:text-xl font-bold border-1 rounded-lg focus:ring-purple-500 focus:border-purple-500"
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                   />
                 ))}
               </div>
@@ -140,10 +156,17 @@ function OtpVerificationPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-[#9333EA] to-[#DB2777] text-white py-6 rounded-lg font-semibold text-sm sm:text-base"
-                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-[#9333EA] to-[#DB2777] text-white py-6 rounded-lg font-semibold text-sm sm:text-base flex justify-center items-center gap-2"
+                disabled={isSubmitting}
               >
-                {isLoading ? 'Verifying...' : 'Verify OTP'}
+                {isSubmitting ? (
+                  <>
+                    <FaSpinner className="animate-spin" />
+                    Verifying...
+                  </>
+                ) : (
+                  "Verify OTP"
+                )}
               </Button>
             </form>
 

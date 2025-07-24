@@ -8,6 +8,7 @@ interface AuthState {
   refreshToken: string | null;
   isAuthenticated: boolean;
   isProfileComplete: boolean;
+  isRegisterPageVisible: boolean;
   tempPhone: string | null;
   tempRequestId: string | null;
   hasSelectedCourse: boolean; // New field
@@ -18,7 +19,9 @@ interface AuthState {
   logout: () => void;
   checkProfileCompletion: () => boolean;
   selectCourse: (courseId: number) => Promise<any>; // New method
-  checkCourseSelection: () => boolean; // New method
+  setIsRegisterPageVisible: (visible: boolean) => void;
+  setHasSelectedCourse: (value: boolean) => void;
+
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -33,10 +36,13 @@ export const useAuthStore = create<AuthState>()(
       tempRequestId: null,
       route: null,
       hasSelectedCourse: false, 
+      isRegisterPageVisible: false,
 
       login: async (phone, request_id) => {
         try {
           const response = await authApi.login({ phone, request_id });
+          console.log(response,"login response");
+          
           set({ tempPhone: phone, tempRequestId: request_id, route: response.route});
           return response;
         } catch (error) {
@@ -47,9 +53,7 @@ export const useAuthStore = create<AuthState>()(
       selectCourse: async (courseId: number) => {
         
         try {
-          const response = await authApi.selectedCourse({ course_id: courseId });
-          console.log(response,"what about this");
-          
+          const response = await authApi.selectedCourse({ course_id: courseId });          
           set({ hasSelectedCourse: true });
           return response;
         } catch (error) {
@@ -57,9 +61,14 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      checkCourseSelection: () => {
-        return get().hasSelectedCourse;
+      setHasSelectedCourse: (value: boolean) => {
+        set({ hasSelectedCourse: value });
       },
+
+      setIsRegisterPageVisible: (visible: boolean) => {
+        set({ isRegisterPageVisible: visible });
+      },
+
 
     verifyOtp: async (phone, code, request_id) => {
       try {
@@ -90,9 +99,7 @@ export const useAuthStore = create<AuthState>()(
 
       register: async (payload) => {
         try {
-          const response = await authApi.register(payload);
-          console.log(response,"what is responseeeeee");
-          
+          const response = await authApi.register(payload);          
           const currentUser = get().user;
           
           set({
@@ -138,7 +145,11 @@ export const useAuthStore = create<AuthState>()(
         refreshToken: state.refreshToken,
         isAuthenticated: state.isAuthenticated,
         isProfileComplete: state.isProfileComplete,
+        tempPhone: state.tempPhone,        
+        tempRequestId: state.tempRequestId,
         hasSelectedCourse: state.hasSelectedCourse,
+        isRegisterPageVisible: state.isRegisterPageVisible,
+        
       })
     }
   )

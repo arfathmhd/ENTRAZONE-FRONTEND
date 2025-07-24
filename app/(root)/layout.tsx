@@ -4,10 +4,10 @@ import AuthGuard from "../components/AuthGuard";
 
 function layout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <AuthGuard requireProfileComplete requireCourseSelection>
+    <>
       <Header />
       {children}
-    </AuthGuard>
+    </>
   );
 }
 

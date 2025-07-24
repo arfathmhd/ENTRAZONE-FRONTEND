@@ -17,23 +17,41 @@ function Courses() {
   const [error, setError] = useState('')
   const router = useRouter()
 
-  const selectCourse = useAuthStore((state) => state.selectCourse)
-  const isProfileComplete = useAuthStore((state) => state.isProfileComplete)
+  const {
+    isAuthenticated,
+    isProfileComplete,
+    hasSelectedCourse,
+    selectCourse
+  } = useAuthStore()
 
-useEffect(() => {
-  console.log("isProfileComplete:", isProfileComplete); // Check the actual value
-  if (!isProfileComplete) {
-    router.push('/register');
-  }
-}, [isProfileComplete, router]);
+  // Check authentication and redirects
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/login')
+      return
+    }
+
+    if (!isProfileComplete) {
+      router.push('/register')
+      return
+    }
+
+    if (hasSelectedCourse) {
+      router.push('/')
+      return
+    }
+  }, [isAuthenticated, isProfileComplete, hasSelectedCourse, router])
 
   useEffect(() => {
+    // Only fetch courses if all checks pass
+    if (!isAuthenticated || !isProfileComplete || hasSelectedCourse) {
+      return
+    }
+
     const fetchCourses = async () => {
       try {
         const response = await authApi.getCourses()
-        console.log('Courses API response:', response)
         const courseList = Array.isArray(response.courses) ? response.courses : []
-        console.log(courseList,"whatttttt");
         
         setCourses(courseList)
       } catch (err) {
@@ -45,10 +63,9 @@ useEffect(() => {
     }
 
     fetchCourses()
-  }, [])
+  }, [isAuthenticated, isProfileComplete, hasSelectedCourse])
 
   const handleCourseSelect = async (courseId: number) => {
-    
     try {
       await selectCourse(courseId)
       router.push('/')
